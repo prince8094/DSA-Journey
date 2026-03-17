@@ -1,28 +1,50 @@
+# Greatest Common Divisor (GCD / HCF)
 
-# GCD & HCF (Greatest Common Divisor)
+## Method 1: Brute Force
+### Intuition
+The GCD is the largest number that divides both $n1$ and $n2$. We check every number starting from 1 up to the smaller of the two.
 
-## Intuition
-Based on my handwritten notes, the Euclidean Algorithm is the most efficient way to find the GCD. Instead of subtracting, we use the modulo operator to reduce the numbers quickly.
+### Strategy
+1. Iterate from $i = 1$ to $\min(n1, n2)$.
+2. If $n1 \% i == 0$ and $n2 \% i == 0$, update the `gcd` variable.
+3. The last value stored is the greatest common divisor.
 
-[Image of Euclidean algorithm flow chart]
+---
 
-## Strategy
-1. Use the property $GCD(a, b) = GCD(a \pmod b, b)$ where $a > b$.
-2. Continue the process until one of the numbers becomes $0$.
-3. The non-zero number remaining is the GCD.
+## Method 2: Euclidean Algorithm (Optimal)
+### Intuition
+Based on the property $GCD(a, b) = GCD(a-b, b)$. The optimized version uses the remainder (modulo) to reach the solution in logarithmic time.
+
+### Strategy
+1. While both $a$ and $b$ are $> 0$:
+   - If $a > b$, set $a = a \% b$.
+   - Else, set $b = b \% a$.
+2. When one becomes 0, the other is the $GCD$.
 
 ## Implementation (C++)
 ```cpp
 #include <iostream>
+#include <algorithm>
 
-int getGCD(int a, int b) {
-    while (a > 0 && b > 0) {
-        if (a > b) {
-            a = a % b; // **Reduce the larger number using modulo**
-        } else {
-            b = b % a;
+class GCD {
+public:
+    // Method 1: Brute Force - O(min(n1, n2))
+    int findGCD_Brute(int n1, int n2) {
+        int gcd = 1;
+        for (int i = 1; i <= std::min(n1, n2); i++) {
+            if (n1 % i == 0 && n2 % i == 0) {
+                gcd = i;
+            }
         }
+        return gcd;
     }
-    // **If a is 0, b is GCD; else a is GCD**
-    return (a == 0) ? b : a;
-}
+
+    // Method 2: Euclidean Algorithm - O(log(min(a, b)))
+    int findGCD_Optimal(int a, int b) {
+        while (a > 0 && b > 0) {
+            if (a > b) a = a % b;
+            else b = b % a;
+        }
+        return (a == 0) ? b : a;
+    }
+};
